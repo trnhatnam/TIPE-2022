@@ -72,16 +72,6 @@ def base_test(path):
     return X_basej,Y_basej
 
 X_test,Y_test = base_test(r'D:\Thomas\TIPE\base_test_nombre')
-
-'''class creation_model():
-    def __init__(self):
-        self.Model = tf.keras.Sequential()
-        self.Model.add(tf.keras.layers.Flatten(input_shape=(55,55,4)))
-        self.Model.add(tf.keras.layers.Dense(256, activation="relu"))
-        self.Model.add(Flatten())
-        self.Model.add(tf.keras.layers.Dense(128, activation ="relu"))
-        self.Model.add(tf.keras.layers.Dense(10, activation = "softmax"))'''
-
 class creation_model():
     def __init__(self):
         self.Model= tf.keras.Sequential()
@@ -103,7 +93,7 @@ class creation_model():
         self.Model.add(Dense(512, activation='relu'))
 
         # Couche de sortie (classes de 0 à 9)
-        self.Model.add(Dense(27, activation='softmax'))
+        self.Model.add(Dense(10, activation='softmax'))
 
 modelf_chiffre = creation_model()
 
@@ -128,10 +118,7 @@ losses = pd.DataFrame(modelf_chiffre.Model.history.history)
 losses[['accuracy', 'val_accuracy']].plot()
 plt.show()
 
-
-
 "base lettres + modèle"
-
 
 def base_trainl(path):
     n=26
@@ -168,16 +155,6 @@ def base_testl(path):
     return X_basej,Y_basej
 
 X_test_lettre,Y_test_lettre = base_testl(r'D:\Thomas\TIPE\base_test_lettre')
-
-'''class creation_model2():
-    def __init__(self):
-        self.Model = tf.keras.Sequential()
-        self.Model.add(tf.keras.layers.Flatten(input_shape=(55,55,4)))
-        self.Model.add(tf.keras.layers.Dense(256, activation="relu"))
-        self.Model.add(tf.keras.layers.Dense(128, activation ="relu"))
-        self.Model.add(tf.keras.layers.Dense(27, activation = "softmax"))'''
-
-
 
 class creation_model3():
     def __init__(self):
@@ -272,7 +249,6 @@ def base_testf(path):
 
 X_test_forme,Y_test_forme = base_testf(r'D:\Thomas\TIPE\base_test_forme')
 
-
 class creation_model4():
     def __init__(self):
         self.Model= tf.keras.Sequential()
@@ -306,25 +282,18 @@ metrics = ["accuracy"]
 
 modelf_forme.Model.summary()
 
+early_stop_forme = EarlyStopping(monitor='accuracy', mode = 'max', patience = 5)
 
 modelf_forme.Model.fit(x=np.array(X_train_forme),
                  y =np.array(Y_train_forme),
                  validation_data = (np.array(X_test_forme),np.array(Y_test_forme)),
                  epochs=16,
-                )
+                callbacks=[early_stop_forme])
+
 
 losses = pd.DataFrame(modelf_forme.Model.history.history)
 losses[['accuracy', 'val_accuracy']].plot()
 plt.show()
-
-
-forme = ["-","o"]
-img = Image.open(r'D:\Thomas\TIPE\base_forme\rectangle2.png')
-img2 = np.array(img)
-img_f = img2.reshape(1,150,150,4)
-m = modelf_forme.Model.predict(img_f)
-forme[np.argmax(m, axis = -1)[0]]
-
 
 ## extraction d'image
 
@@ -406,8 +375,6 @@ def ecriture_finale(name,path):
         indicatrice.append("D:\Thomas\TIPE\photo_radar"+"\\"+name+"f"+str(k)+'.png')
     return indicatrice
 
-
-
 ### identification plaque
 
     lettres = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
@@ -466,16 +433,6 @@ def reco_chiffres(name,path):
         chiffres_plaque.append(chiffre)
     return chiffres_plaque
 
-img_c =Image.open("D:\Thomas\TIPE\image_à_traitées\caracteresf5.png")
-img2_c = np.array(img_c)
-img_f_c = cv2.resize(img2_c,(110,110))
-img_f2_c = img_f_c.reshape(1,55,55,4)
-
-modelf_chiffre.Model.predict(img_f2_c)
-
-np.argmax(modelf_chiffre.Model.predict(img_f2_c), axis=-1)[0]
-
-
 def reco_forme(name,path):
     L = ecriture_finale(name,path)
     forme_plaque = []
@@ -498,8 +455,22 @@ def reco_forme(name,path):
     forme_plaque.append(n)
     return forme_plaque
 
+def reco_finale(name,path):
+    K1,K2 = reco_lettres(name,path)
+    L = reco_chiffres(name,path)
+    M = reco_forme(name,path)
+    plaque_lu =''
+    for i  in range (2):
+        plaque_lu += K1[i]
+    plaque_lu += '-'
+    for j in range(3):
+        plaque_lu +=  str(L[j])
+    plaque_lu += '-'
+    for k in range(2):
+        plaque_lu += K2[k]
+    return plaque_lu
 
-def reconaisaance_plaque(name,path):
+
 
 
 
