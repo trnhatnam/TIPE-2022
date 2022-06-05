@@ -43,51 +43,6 @@ cd(r'D:\Thomas\TIPE\photo_radar')
 
 lettre_class = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
-### crétion des bases
-
-# toutes les polices sont dans le même dossier
-os.chdir("D:/Thomas/TIPE")
-
-
-base = ascii_uppercase + '0123456789'
-dossierLettre = "images_lettre_test/"
-dossierChiffre = "images_nombre_test/"
-i=0
-
-if not os.path.exists(dossierLettre):
-    os.makedirs(dossierLettre)
-
-if not os.path.exists(dossierChiffre):
-    os.makedirs(dossierChiffre)
-
-for fichier in os.listdir():
-    if os.path.isfile(fichier) and len(fichier.split('.')) == 2:
-        nom, ext = fichier.split('.')
-        if ext in ('ttf','TTF'):
-            for char in base:
-                police = ImageFont.truetype(fichier, 70)
-                L, H = police.getsize(char)
-                img = Image.new('RGBA',(L,H), "black")
-                dessin = ImageDraw.Draw(img)
-                dessin.text((0, 0), char,(255, 255, 255),font=police)
-                img = img.resize((25,50))
-                if char.isdigit():
-                    img.save(dossierChiffre + char + '%s.png' % (i))
-                    img2 = cv2.imread(dossierChiffre + char + '%s.png' % (i))
-                    kernel = np.ones((5,5),np.uint8)
-                    dilatation = cv2.dilate(np.uint8(img2),kernel,iterations = 1)
-                    ret,thresh = cv2.threshold(dilatation,127,255,cv2.THRESH_BINARY_INV)
-                    imgf = cv2.cvtColor(thresh, cv2.COLOR_RGB2RGBA)
-                    cv2.imwrite(dossierChiffre + char + '%s.png' % (i),imgf)
-                else:
-                    img.save(dossierLettre + char + '%s.png' % (i))
-                    img2 = cv2.imread(dossierLettre + char + '%s.png' % (i))
-                    kernel = np.ones((5,5),np.uint8)
-                    dilatation = cv2.dilate(np.uint8(img2),kernel,iterations = 1)
-                    ret,thresh = cv2.threshold(dilatation,127,255,cv2.THRESH_BINARY_INV)
-                    imgf = cv2.cvtColor(thresh, cv2.COLOR_RGB2RGBA)
-                    cv2.imwrite(dossierLettre + char + '%s.png' % (i),imgf)
-            i += 1
 ### base nombre + modèle nombre
 
 
